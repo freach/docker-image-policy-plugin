@@ -1,0 +1,7 @@
+github.com
+golang.org
+docker-image-policy
+src
+pkg
+bin
+*.deb

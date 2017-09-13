@@ -1,0 +1,16 @@
+[Unit]
+Description=Docker Image Policy Plugin
+Before=docker.socket
+After=network-online.target syslog.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/docker-image-policy
+SyslogIdentifier=docker-image-policy
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
