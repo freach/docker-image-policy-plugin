@@ -1,11 +1,12 @@
 prefix = /usr/local
+VERSION = $(shell cat VERSION)
 
-all: docker-image-policy
+all: build
 
-docker-image-policy:
-	go build -o docker-image-policy .
+build:
+	go build -o docker-image-policy -ldflags "-X main.version=$(VERSION)" .
 
-install: docker-image-policy
+install: build
 	install -D docker-image-policy $(DESTDIR)$(prefix)/bin/docker-image-policy
 
 clean:
