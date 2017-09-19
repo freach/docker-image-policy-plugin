@@ -13,9 +13,9 @@ go get github.com/docker/docker/api
 go get github.com/docker/engine-api/client
 make
 
-mkdir -p _tmp/usr/bin _tmp/etc/systemd/system _tmp/etc/docker
+mkdir -p _tmp/usr/bin _tmp/lib/systemd/system _tmp/etc/docker
 cp docker-image-policy _tmp/usr/bin
-cp docker-image-policy.service _tmp/etc/systemd/system
+cp docker-image-policy.service _tmp/lib/systemd/system
 chmod 755 _tmp/usr/bin/docker-image-policy
 cat <<EOF > _tmp/etc/docker/docker-image-policy.json
 {
