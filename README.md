@@ -85,11 +85,22 @@ Start `docker-image-policy` and restart Docker daemon.
 
 ```sh
 $ docker-image-policy &
-$ curl localhost:8080/health
+$ curl localhost:5006/health
 $ service docker restart
 ```
 
 **Please consider using the systemd service file for running docker-image-policy**
+
+## API Endpoints
+
+* `/health` -> Health check
+* `/config` -> Current config
+* `/version` -> Current version
+
+```
+$ curl localhost:5006/health
+HEALTHY
+```
 
 ## Author
 
