@@ -17,7 +17,13 @@ mkdir -p _tmp/usr/bin _tmp/etc/systemd/system _tmp/etc/docker
 cp docker-image-policy _tmp/usr/bin
 cp docker-image-policy.service _tmp/etc/systemd/system
 chmod 755 _tmp/usr/bin/docker-image-policy
-touch _tmp/etc/docker/image-whitelist
+cat <<EOF > _tmp/etc/docker/docker-image-policy.json
+{
+  "whitelist": [],
+  "blacklist": [],
+  "defaultAllow": false
+}
+EOF
 
 cat <<EOF > post-install.sh
 #!/bin/sh
@@ -41,12 +47,12 @@ fpm \
   --url https://github.com/freach/docker-image-policy-plugin\
   --license "Apache License, Version 2.0"\
   -m "Simon Pirschel <simon@aboutsimon.com>"\
-  -v $(cat VERSION)\
+  -v "$(cat VERSION)"\
   -n docker-image-policy-plugin\
   --category admin\
   --after-install ./post-install.sh\
   --before-remove ./post-remove.sh\
   -C _tmp\
-  -p $(pwd)
+  -p "$(pwd)"
 
 rm -rf _tmp post-install.sh post-remove.sh
