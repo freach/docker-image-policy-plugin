@@ -32,7 +32,44 @@ $ sh build-deb.sh
 $ ls *.deb
 ```
 
-## Running
+## Get started
+
+### Plugin configuration
+
+Add a config file (default: /etc/docker/docker-image-policy.json), and configure the plugin like so:
+
+```json
+{
+  "whitelist": [
+    "^alpine:",
+    "^docker\\.elastic\\.co/beats/filebeat:",
+    "^gcr\\.io/google_containers",
+    "^mysql:",
+    "^nginx:",
+    "^php:",
+    "^apache:",
+    "^quay\\.io/calico/cni",
+    "^quay\\.io/calico/node",
+    "^quay\\.io/coreos/flannel"
+  ],
+  "blacklist": [
+    "^docker:"
+  ],
+  "defaultAllow": false
+}
+```
+The *whitelist* and *blacklist* array expect strings in regex format. Image pull requests will be checked by applying the compiled regular expressions.
+**Certain characters in a regular expression like "." have special meaning and need to be escaped. The JSON format requires you to double escape**.
+
+Image pull request will be handled in the following order:
+
+1. Whitelist: Allow explicitly white listed images
+1. Blacklist: Reject explicitly black listed images
+1. defaultAllow: If true allow, if false reject
+
+If one of the steps matched, the plugin will return accordingly.
+
+### Docker configuration
 
 Edit your `/etc/docker/daemon.json`
 
@@ -42,21 +79,7 @@ Edit your `/etc/docker/daemon.json`
 }
 ```
 
-Add a whitelist config file (default: */etc/docker/image-whitelist*), one
-whitelist regex entry per line, like so:
-
-```
-^alpine:
-^docker\.elastic\.co\/beats\/filebeat:
-^gcr\.io\/google_containers
-^mysql:
-^nginx:
-^php:
-^apache:
-^quay\.io\/calico\/cni
-^quay\.io\/calico\/node
-^quay\.io\/coreos\/flannel
-```
+### Running
 
 Start `docker-image-policy` and restart Docker daemon.
 

@@ -76,7 +76,21 @@ func (p *authPlugin) AuthZReq(req authorization.Request) authorization.Response 
 			}
 		}
 
-		logrus.Infof("Image %s blocked", image)
+		for _, v := range reBlacklist {
+			if v.Match(bImage) {
+				logrus.Infof("Image %s blocked, because blacklisted.", image)
+				return authorization.Response{
+					Allow: false,
+					Msg: fmt.Sprintf("Image %s is blacklisted on this server.", image),
+				}
+			}
+		}
+
+		if configuration.DefaultAllow == true {
+			return authorization.Response{Allow: true}
+		}
+
+		logrus.Infof("Image %s blocked, because default is reject.", image)
 		return authorization.Response{
 			Allow: false,
 			Msg: fmt.Sprintf("Image %s is not allowed on this server.", image),
