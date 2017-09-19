@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"fmt"
 	"encoding/json"
+	"bytes"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/go-plugins-helpers/authorization"
@@ -16,13 +17,13 @@ const (
 	defaultDockerHost = "unix:///var/run/docker.sock"
 	pluginSocket      = "/run/docker/plugins/docker-image-policy.sock"
 	defaultConfig  = "/etc/docker/docker-image-policy.json"
-	defaultAddr       = "0.0.0.0:8080"
+	defaultAddr       = "127.0.0.1:5006"
 )
 
 type Config struct {
 	Whitelist []string `json:"whitelist"`
-	Blacklist []string `json:blacklist`
-	DefaultAllow bool `json:defaultAllow`
+	Blacklist []string `json:"blacklist"`
+	DefaultAllow bool `json:"defaultAllow"`
 }
 
 // Globals
@@ -40,7 +41,7 @@ var (
 	flTLSVerify  = flag.Bool("tls-verify", false, "Verify certificates")
 	flDebug      = flag.Bool("debug", false, "Enable debug logging")
 	flVersion    = flag.Bool("version", false, "Print version")
-	flAddr       = flag.String("addr", defaultAddr, "Webserver [HOSTNAME:PORT]")
+	flAddr       = flag.String("addr", defaultAddr, "Plugin API [HOSTNAME:PORT]")
 	flConfig     = flag.String("config", defaultConfig, "Path to plugin config file")
 )
 
@@ -79,7 +80,22 @@ func readConfig(configFile string) error {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "HEALTHY")
+	fmt.Fprint(w, "HEALTHY")
+}
+
+func versionHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, version)
+}
+
+func configHandler(w http.ResponseWriter, r *http.Request) {
+	b, err := json.Marshal(configuration)
+	if err != nil {
+		fmt.Fprint(w, err)
+	}
+
+	var out bytes.Buffer
+	json.Indent(&out, b, "", "    ")
+	out.WriteTo(w)
 }
 
 func main() {
@@ -108,6 +124,8 @@ func main() {
 
 	// Add additional handlers
 	http.HandleFunc("/health", healthHandler)
+	http.HandleFunc("/config", configHandler)
+	http.HandleFunc("/version", versionHandler)
 
 	go func() {
 		logrus.Debugf("Server running on %s", *flAddr)
