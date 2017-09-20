@@ -5,6 +5,8 @@ which Images are allowed to be pulled by your Docker daemon. The plugin is using
 the [AuthZPlugin API](https://docs.docker.com/engine/extend/plugins_authorization/)
 by Docker. Whitelistings are expressed through Regular expression.
 
+**Supported: Docker Engine >= 1.11**
+
 ## Building
 
 To build this plugin Go >= 1.7 and proper GOPATH setup is required.

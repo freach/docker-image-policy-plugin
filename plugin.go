@@ -50,8 +50,6 @@ type authPlugin struct {
 }
 
 func (p *authPlugin) AuthZReq(req authorization.Request) authorization.Response {
-	// DEBU[0371] Request: POST /v1.29/images/create?fromImage=nginx&tag=latest
-
 	if req.RequestMethod == "POST" && strings.Contains(req.RequestURI, "/images/create") {
 		uri, err := url.ParseRequestURI(req.RequestURI)
 		if err != nil {
@@ -67,7 +65,14 @@ func (p *authPlugin) AuthZReq(req authorization.Request) authorization.Response 
 			return authorization.Response{Allow: false, Msg: errMsg}
 		}
 
-		image := fmt.Sprintf("%s:%s", query["fromImage"][0], query["tag"][0])
+		var image string
+		if _, exists := query["tag"]; exists {
+			image = fmt.Sprintf("%s:%s", query["fromImage"][0], query["tag"][0])
+		} else {
+			// Docker < 17.xx
+			image = query["fromImage"][0]
+		}
+
 		bImage := []byte(image)
 
 		for _, v := range reWhitelist {
