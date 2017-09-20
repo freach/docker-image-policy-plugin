@@ -64,13 +64,13 @@ Add a config file (default: /etc/docker/docker-image-policy.json), and configure
 The *whitelist* and *blacklist* array expect strings in regex format. Image pull requests will be checked by applying the compiled regular expressions on the full image, *< repository >:< tag >*.
 **Certain characters in a regular expression like "." have special meaning and need to be escaped. The JSON format requires you to double escape**.
 
-Image pull request will be handled in the following order:
+Image pull requests will be handled in the following order:
 
 1. Whitelist: Allow explicitly white listed images
 1. Blacklist: Reject explicitly black listed images
-1. defaultAllow: If true allow, if false reject
+1. defaultAllow: Default policy, if true allow, if false reject
 
-If one of the steps matched, the plugin will return accordingly.
+If one of the steps matched, the plugin will return accordingly. If whitelist and blacklist did not match, the default policy `defaultAllow` will allow or reject the request.
 
 ### Docker configuration
 
@@ -95,6 +95,8 @@ $ service docker restart
 **Please consider using the systemd service file for running docker-image-policy**
 
 ## API Endpoints
+
+Besides the plugin API for Docker a second API provided through *127.0.0.1:5006* (default) is available to monitor the plugin or check the current state.
 
 * `/health` -> Health check
 * `/config` -> Current config
