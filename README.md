@@ -61,7 +61,7 @@ Add a config file (default: /etc/docker/docker-image-policy.json), and configure
   "defaultAllow": false
 }
 ```
-The *whitelist* and *blacklist* array expect strings in regex format. Image pull requests will be checked by applying the compiled regular expressions on the full image, *<repository>:<tag>*.
+The *whitelist* and *blacklist* array expect strings in regex format. Image pull requests will be checked by applying the compiled regular expressions on the full image, *< repository >:< tag >*.
 **Certain characters in a regular expression like "." have special meaning and need to be escaped. The JSON format requires you to double escape**.
 
 Image pull request will be handled in the following order:
