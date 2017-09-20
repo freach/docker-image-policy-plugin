@@ -3,7 +3,8 @@
 `docker-image-policy` is a Docker *Access authorization plugin* written Go to control
 which Images are allowed to be pulled by your Docker daemon. The plugin is using
 the [AuthZPlugin API](https://docs.docker.com/engine/extend/plugins_authorization/)
-by Docker. Whitelistings are expressed through Regular expression.
+by Docker. Black and Whitelistings are expressed through regular expression.
+A default policy if no listing matched can be defined also.
 
 **Supported: Docker Engine >= 1.11**
 
@@ -60,7 +61,7 @@ Add a config file (default: /etc/docker/docker-image-policy.json), and configure
   "defaultAllow": false
 }
 ```
-The *whitelist* and *blacklist* array expect strings in regex format. Image pull requests will be checked by applying the compiled regular expressions.
+The *whitelist* and *blacklist* array expect strings in regex format. Image pull requests will be checked by applying the compiled regular expressions on the full image, *<repository>:<tag>*.
 **Certain characters in a regular expression like "." have special meaning and need to be escaped. The JSON format requires you to double escape**.
 
 Image pull request will be handled in the following order:
