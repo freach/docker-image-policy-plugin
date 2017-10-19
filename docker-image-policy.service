@@ -1,6 +1,6 @@
 [Unit]
 Description=Docker Image Policy Plugin
-Before=docker.socket
+Before=docker.service
 After=network-online.target syslog.target
 Wants=network-online.target
 
